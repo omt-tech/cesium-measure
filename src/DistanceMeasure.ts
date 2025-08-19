@@ -1,9 +1,9 @@
-import { Cartesian3 } from 'cesium';
-import { convertLength } from '@turf/helpers';
+import { Cartesian3 } from "cesium";
+import { convertLength } from "@turf/helpers";
 
-import Measure from './Measure';
+import Measure from "./Measure";
 
-import type { PolylineGraphics } from 'cesium';
+import type { PolylineGraphics } from "cesium";
 
 /**
  * 距离测量类
@@ -31,9 +31,14 @@ class DistanceMeasure extends Measure {
     return Cartesian3.distance(start, end);
   }
 
+  getCart3AxisDistance(start: Cartesian3, end: Cartesian3): Cartesian3 {
+    return new Cartesian3(start.x - end.x, start.y - end.y, start.z - end.z);
+  }
+
   protected _updateLabelTexts(positions: Cartesian3[]) {
     const num = positions.length;
     let distance = 0;
+    let unitedAxisDis = [0, 0, 0];
     for (let i = 0; i < num; i += 1) {
       const label = this._labels.get(i);
       if (i === 0) {
@@ -46,34 +51,65 @@ class DistanceMeasure extends Measure {
         ).toFixed(2);
         const unitedNewDis = +convertLength(
           newDis,
-          'meters',
+          "meters",
           this._units,
         ).toFixed(2);
-
+        const newAxisDis = this.getCart3AxisDistance(
+          positions[i - 1],
+          positions[i],
+        );
+        const unitedNewAxisDis = [newAxisDis.x, newAxisDis.y, newAxisDis.z].map(
+          (value) => {
+            const isNegative = value < 0;
+            const converted = +convertLength(
+              Math.abs(value),
+              "meters",
+              this._units,
+            ).toFixed(2);
+            return isNegative ? -converted : converted;
+          },
+        );
         distance += newDis;
         distance = +distance.toFixed(2);
         const unitedDistance = +convertLength(
           distance,
-          'meters',
+          "meters",
           this._units,
         ).toFixed(2);
+        unitedAxisDis = unitedNewAxisDis.map((val, i) => {
+          return unitedAxisDis[i] + val;
+        });
 
         label.text =
-          (i === num - 1 ? `${this._locale.total}: ` : '') +
+          (i === num - 1 ? `${this._locale.total}: ` : "D: ") +
           this._locale.formatLength(distance, unitedDistance, this._units) +
+          "\n" +
+          `(${this._locale.formatLength(
+            Math.abs(newAxisDis.x),
+            unitedAxisDis[0],
+            this._units,
+          )}, ${this._locale.formatLength(
+            Math.abs(newAxisDis.y),
+            unitedAxisDis[1],
+            this._units,
+          )}, ${this._locale.formatLength(
+            Math.abs(newAxisDis.z),
+            unitedAxisDis[2],
+            this._units,
+          )})` +
           (i > 1
             ? `\n(+${this._locale.formatLength(
                 newDis,
                 unitedNewDis,
                 this._units,
               )})`
-            : '');
+            : "");
       }
     }
   }
 
   start(style: PolylineGraphics.ConstructorOptions = {}) {
-    this._start('POLYLINE', {
+    this._start("POLYLINE", {
       style,
       clampToGround: false,
     });
