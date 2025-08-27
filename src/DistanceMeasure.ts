@@ -84,15 +84,7 @@ class DistanceMeasure extends Measure {
           (i === num - 1 ? `${this._locale.total}: ` : "D: ") +
           this._locale.formatLength(distance, unitedDistance, this._units) +
           "\n" +
-          `(${this._locale.formatLength(
-            Math.abs(newAxisDis.x),
-            unitedAxisDis[0],
-            this._units,
-          )}, ${this._locale.formatLength(
-            Math.abs(newAxisDis.y),
-            unitedAxisDis[1],
-            this._units,
-          )}, ${this._locale.formatLength(
+          `(Z: ${this._locale.formatLength(
             Math.abs(newAxisDis.z),
             unitedAxisDis[2],
             this._units,
