@@ -160,6 +160,7 @@ declare class DistanceMeasure extends Measure {
      */
     getDistance(start: Cartesian3, end: Cartesian3): number;
     getCart3AxisDistance(start: Cartesian3, end: Cartesian3): Cartesian3;
+    getCart3Height(start: Cartesian3, end: Cartesian3): number;
     protected _updateLabelTexts(positions: Cartesian3[]): void;
     start(style?: PolylineGraphics.ConstructorOptions): void;
 }

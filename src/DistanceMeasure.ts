@@ -1,4 +1,4 @@
-import { Cartesian3 } from "cesium";
+import { Cartesian3, Cartographic } from "cesium";
 import { convertLength } from "@turf/helpers";
 
 import Measure from "./Measure";
@@ -35,6 +35,13 @@ class DistanceMeasure extends Measure {
     return new Cartesian3(start.x - end.x, start.y - end.y, start.z - end.z);
   }
 
+  getCart3Height(start: Cartesian3, end: Cartesian3): number {
+    const startCartographic = Cartographic.fromCartesian(start);
+    const endCartographic = Cartographic.fromCartesian(end);
+
+    return Math.abs(startCartographic.height - endCartographic.height);
+  }
+
   protected _updateLabelTexts(positions: Cartesian3[]) {
     const num = positions.length;
     let distance = 0;
@@ -58,6 +65,7 @@ class DistanceMeasure extends Measure {
           positions[i - 1],
           positions[i],
         );
+        const height = this.getCart3Height(positions[i - 1], positions[i]);
         const unitedNewAxisDis = [newAxisDis.x, newAxisDis.y, newAxisDis.z].map(
           (value) => {
             const isNegative = value < 0;
@@ -85,7 +93,7 @@ class DistanceMeasure extends Measure {
           this._locale.formatLength(distance, unitedDistance, this._units) +
           "\n" +
           `(Z: ${this._locale.formatLength(
-            Math.abs(newAxisDis.z),
+            height,
             unitedAxisDis[2],
             this._units,
           )})` +

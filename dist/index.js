@@ -335,6 +335,11 @@ class DistanceMeasure extends Measure {
   getCart3AxisDistance(start, end) {
     return new Cartesian3(start.x - end.x, start.y - end.y, start.z - end.z);
   }
+  getCart3Height(start, end) {
+    const startCartographic = Cartographic.fromCartesian(start);
+    const endCartographic = Cartographic.fromCartesian(end);
+    return Math.abs(startCartographic.height - endCartographic.height);
+  }
   _updateLabelTexts(positions) {
     const num = positions.length;
     let distance = 0;
@@ -358,6 +363,7 @@ class DistanceMeasure extends Measure {
           positions[i - 1],
           positions[i]
         );
+        const height = this.getCart3Height(positions[i - 1], positions[i]);
         const unitedNewAxisDis = [newAxisDis.x, newAxisDis.y, newAxisDis.z].map(
           (value) => {
             const isNegative = value < 0;
@@ -381,7 +387,7 @@ class DistanceMeasure extends Measure {
         });
         label.text = (i === num - 1 ? `${this._locale.total}: ` : "D: ") + this._locale.formatLength(distance, unitedDistance, this._units) + `
 (Z: ${this._locale.formatLength(
-          Math.abs(newAxisDis.z),
+          height,
           unitedAxisDis[2],
           this._units
         )})` + (i > 1 ? `
