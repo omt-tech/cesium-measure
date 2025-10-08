@@ -39,7 +39,7 @@
     "rollup-plugin-esbuild": "^6.2.1"
   },
   "dependencies": {
-    "@cesium-extends/drawer": "github:omt-tech/cesium-drawer#f850c5644186b23a787c7b3fd39201221897a39c",
+    "@cesium-extends/drawer": "^1.2.2",
     "@cesium-extends/subscriber": "^1.0.1",
     "@cesium-extends/tooltip": "^1.2.1",
     "@turf/area": "^6.5.0",
