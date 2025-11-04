@@ -38,6 +38,7 @@ type MeasureOptions = {
     units?: MeasureUnits;
     onEnd?: (entity: Entity) => void;
     drawerOptions?: Partial<DrawOption>;
+    disableTooltip?: boolean;
     /**
      * @example
      * {
@@ -60,15 +61,16 @@ type MeasureOptions = {
      */
     locale?: Partial<MeasureLocaleOptions>;
 };
-type Status = 'INIT' | 'WORKING' | 'DESTROY';
+type Status = "INIT" | "WORKING" | "DESTROY";
 declare class Measure {
     protected _viewer: Viewer;
     protected _status: Status;
     protected _labels: LabelCollection;
-    protected _labelStyle: MeasureOptions['labelStyle'];
+    protected _labelStyle: MeasureOptions["labelStyle"];
     protected _units: MeasureUnits;
     protected _locale: MeasureLocaleOptions;
-    mouseTooltip: MouseTooltip;
+    protected _disableTooltip: boolean;
+    mouseTooltip: MouseTooltip | null;
     drawer: Drawer;
     private _onEnd;
     /**
@@ -93,7 +95,7 @@ declare class Measure {
      * @param {string} type 绘制图形类型
      * @param {boolean} clampToGround 是否贴地
      */
-    protected _start(type: 'POLYGON' | 'POLYLINE' | 'POINT' | 'CIRCLE' | 'RECTANGLE', options?: {
+    protected _start(type: "POLYGON" | "POLYLINE" | "POINT" | "CIRCLE" | "RECTANGLE", options?: {
         style?: object;
         clampToGround?: boolean;
     }): void;

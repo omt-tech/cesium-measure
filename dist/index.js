@@ -55,6 +55,7 @@ class Measure {
   _labelStyle;
   _units;
   _locale;
+  _disableTooltip;
   mouseTooltip;
   drawer;
   _onEnd;
@@ -64,6 +65,7 @@ class Measure {
    * @param {MeasureOptions['locale']} [options.locale] 绘制时的提示信息
    */
   constructor(viewer, options = {}) {
+    var _a;
     if (!viewer) throw new Error("undefined viewer");
     this._viewer = viewer;
     this._labelStyle = {
@@ -80,8 +82,9 @@ class Measure {
       formatArea,
       ...options.locale
     };
-    this.mouseTooltip = new MouseTooltip(viewer);
-    this.mouseTooltip.hide();
+    this._disableTooltip = options.disableTooltip ?? false;
+    this.mouseTooltip = this._disableTooltip ? null : new MouseTooltip(viewer);
+    (_a = this.mouseTooltip) == null ? void 0 : _a.hide();
     this.drawer = new Drawer(viewer, {
       sameStyle: true,
       terrain: true,
@@ -148,8 +151,9 @@ class Measure {
     this._status = "INIT";
   }
   destroy() {
+    var _a;
     this.end();
-    this.mouseTooltip.destroy();
+    (_a = this.mouseTooltip) == null ? void 0 : _a.destroy();
     if (this._viewer && !this._viewer.isDestroyed()) {
       this._viewer.scene.primitives.remove(this._labels);
     }
